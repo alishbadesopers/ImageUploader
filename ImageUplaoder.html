@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nanum+Gothic+Coding&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Nanum Gothic Coding", monospace;
+    }
+
+    body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw; 
+    margin: 0;   
+    background-color: rgb(41, 120, 189);
+    }
+
+    .main{
+        width: 500px;
+        height: auto;
+        border-radius: 10px;
+        padding: 40px;
+        background-color: white;
+    }
+
+    h1{
+        color: rgb(41, 120, 189);
+        text-align: center;
+        padding-bottom: 40px;
+    } 
+    
+    .input-box{
+         border: 2px dashed rgb(41, 120, 189);
+         padding: 20px;
+         border-radius: 10px;
+         display: flex;
+         flex-direction: column;
+         justify-content: center;
+         text-align: center;
+         font-size: 25px;
+         line-height: 40px;
+    }
+    .input-box span{
+        font-size: 12px;
+    }
+    .input-box i{
+        font-size: 50px;
+        border-radius: 100px;
+        padding: 20px;
+        background-color: rgb(41, 120, 189);
+        color: white;
+        margin: 20px 0;
+    }
+
+    .input-box p{
+        color: rgb(41, 120, 189);
+    }
+
+    .progress-area{
+        padding-top: 30px;
+    }
+    .content-box{
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: aliceblue;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        line-height: 30px;
+    }
+    .content-box i{
+        color: rgb(41, 120, 189);
+        font-size: 20px;
+    }
+    img {
+    background-color: rgb(41, 120, 189);
+    background-position: center;
+    background-size: cover;
+    object-fit: contain;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    }
+    #image-container{
+    background-color: rgb(41, 120, 189);
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    }
+    .uploading{
+        display: flex;
+        justify-content: space-between;
+    }
+    .percent{
+        margin-left: 130px;
+    }
+    .uploaded-area{
+        margin: 10px 0;
+    }
+    .uploaded-area{
+        max-height: 350px;
+        overflow-y: scroll;
+    }
+    .uploaded-area::-webkit-scrollbar{
+        width: 0;
+    }
+    .mbs{
+        font-size: 14px;
+        color: grey;
+    }
+</style>
+
+<body>
+<div class="main">
+    <h1>File Uploader</h1>
+    <div class="input-box">
+        <input type="file" name="file" id="file-input" onchange="preview()" multiple hidden>
+        <label for="file-input"><i class="fa-solid fa-upload"></i><p>Upload Multiple Image</p></label>
+        <span class="numOfFiles">No File Choosen</span>
+    </div>
+
+    <section class="uploaded-area"></section>
+
+</div>
+
+<!-- method1 single file uploader -->
+    <!-- <input type="file" name="file" id="file" onchange="upload(event)">
+    <div id="display"></div> -->
+
+<script>
+
+// method 2 multiple file uploader
+let FileInput = document.querySelector('#file-input');
+let numOfFiles = document.querySelector('.numOfFiles');
+let caption = document.querySelector('.name');
+let progressArea = document.querySelector('.progress-area')
+let uploadedArea = document.querySelector('.uploaded-area')
+
+
+function preview() { 
+    numOfFiles.textContent = `${FileInput.files.length} Files Selected`;
+
+    for (let i of FileInput.files) {
+        let reader = new FileReader();
+        let contentBox = document.createElement('div');       
+        contentBox.className = 'content-box';
+        let uploaded = document.createElement('div'); 
+        uploaded.className = 'uploaded';
+        let name = document.createElement('div');  
+        name.className = 'name';
+        let mbs = document.createElement('span');  
+        mbs.className = 'mbs';
+               
+        // Calculate and format the file size
+        let fileSize = (i.size / 1024).toFixed(2);
+        if (fileSize > 1024) {
+            fileSize = (fileSize / 1024).toFixed(2) + " MB";
+        } else {
+            fileSize += " KB";
+        }
+        mbs.textContent = fileSize;
+        name.textContent = i.name;
+
+        reader.onload = () => {
+           let displayImg = document.createElement('img');
+           displayImg.setAttribute('src', reader.result);
+           uploadedArea.appendChild(contentBox);
+           contentBox.appendChild(displayImg);
+           contentBox.appendChild(uploaded);
+           uploaded.appendChild(name);
+           uploaded.appendChild(mbs);
+        };
+     
+        reader.readAsDataURL(i);
+    }
+}
+
+
+// method 1 single file uploader
+        // let file = document.getElementById('file')
+        // let display = document.getElementById('display')
+
+        // function upload(event) {
+        //     display.style.backgroundImage = "url(" + URL.createObjectURL(event.target.files[0]) + ")";
+        // }
+        
+
+    </script>
+</body>
+
+</html>
